@@ -1,0 +1,60 @@
+%% CHANCE
+% Just one roll because same probability either way
+pointsExpected = 0;
+rounds = 0;
+rollNumber = 0;
+totalPointsExpected = 0;
+averagePoints = 0;
+roll=[];
+numRounds = 3;
+pointsExpectedSquared = 0;
+totalPointsSquared = 0;
+variance = 0;
+standardDev = 0;
+
+while rounds < 10000
+    pointsExpected = 0;
+    fprintf("Rolling the die...");
+    for i = 1:5
+        roll(i) = randi(6,1,1);
+    end
+    disp(roll);
+    
+    for i = 1:5
+        pointsExpected = pointsExpected + roll(i);
+    end
+    
+    pointsExpectedSquared = pointsExpected*pointsExpected;
+   
+    totalPointsExpected = totalPointsExpected + pointsExpected;
+    totalPointsSquared = pointsExpectedSquared + totalPointsSquared;
+
+    rounds = rounds + 1;
+end
+
+fprintf("Total Points Expected: ");
+disp(totalPointsExpected);
+averagePoints = totalPointsExpected / rounds;
+
+averagePointsSquared = totalPointsSquared / rounds;
+
+variance = averagePointsSquared - (averagePoints*averagePoints);
+fprintf("Variance");
+disp(variance);
+standardDev = sqrt(variance);
+
+fprintf("average Points: ");
+disp(averagePoints);
+
+fprintf("standard deviation: ");
+disp(standardDev);
+
+x = standardDev*randn(10000,1)+averagePoints;
+[N,X] = hist(x,100);
+hfig = figure;
+bar(X,N)
+hold on;
+title('Histogram for Chance');
+ylabel('Reoccurrences');
+xlabel('Points Expected');
+
