@@ -1,0 +1,206 @@
+clc
+keptDice = [0 0 0 0 0]; %variable to store dice kept between roles
+tracker = [0 0 0 0 0 0];
+fullHouse = false;
+diceRemaining = 5; %begin with five dice in hand
+lookingFor = [0, 0];
+threeKind = 0;
+rolls = 0
+points = 0
+roundsWon = 0
+pointsSquared = 0
+rounds = 10000
+
+for x = 1:rounds
+    while rolls < 3 & fullHouse == false
+        if diceRemaining == 5
+            roll = randi(6,1,5)
+
+            for i = 1:5
+                for j = 1:6
+                    if roll(i) == j
+                        tracker(j) = (tracker(j) + 1);
+                    end
+                end
+            end
+            tracker
+            maxTracker = max(tracker)
+            mostNumber = find(tracker == maxTracker)
+            if maxTracker == 1
+                diceRemaining = 5
+            elseif maxTracker == 2
+                ammountMaxNums = size(mostNumber, 2)
+                if ammountMaxNums == 1
+                    keptDice = [mostNumber, mostNumber, 0, 0, 0]
+                    lookingFor = [mostNumber, 0]
+                    diceRemaining = 3
+                elseif ammountMaxNums == 2
+                    keptDice = [mostNumber(1), mostNumber(1), mostNumber(2), mostNumber(2), 0]
+                    lookingFor = [mostNumber(1), mostNumber(2)]
+                    diceRemaining = 1
+                end
+            elseif maxTracker == 3
+                for i = 1:6
+                    if tracker(i) == 2 
+                        fullHouse = true
+                        keptDice = [mostNumber, mostNumber, mostNumber, i, i]
+                        diceRemaining = 0
+                    end
+                end
+                if fullHouse == false
+                    lastNumber = find(tracker == 1)
+                    keptDice = [mostNumber, mostNumber, mostNumber, lastNumber(1), 0]
+                    threeKind = mostNumber
+                    lookingFor = [0, lastNumber(1)]
+                    diceRemaining = 1
+                end
+            elseif maxTracker == 5
+                 keptDice = [mostNumber, mostNumber, mostNumber, 0, 0]
+                 threeKind = mostNumber
+                 lookingFor = [0, 0]
+                 diceRemaining = 2
+            elseif maxTracker > 3
+                lastNumber = find(tracker == 1)
+                keptDice = [mostNumber, mostNumber, mostNumber, lastNumber(1), 0]
+                threeKind = mostNumber
+                lookingFor = [0, lastNumber(1)]
+                diceRemaining = 1
+            end
+        if diceRemaining == 2 & lookingFor(1) == 0 & lookingFor(2) == 0
+            roll = randi(6, 1, diceRemaining)
+            if roll(1) == roll(2) & roll(1) ~= keptDice(1)
+                keptDice = [keptDice(1), keptDice(2), keptDice(3), roll(1), roll(2)]
+                lookingFor = [0, 0]
+                diceRemaining = 0
+                fullHouse = true
+            elseif roll(2) == roll(1) & roll(2) == keptDice(1)
+                keptDice = [keptDice(1), keptDice(2), keptDice(3), 0, 0]
+                lookingFor = [0, 0]
+                diceRemaining = 2
+            elseif roll(1) ~= keptDice(1)
+                keptDice = [keptDice(1), keptDice(2), keptDice(3), roll(1), 0]
+                lookingFor = [0, roll(1)]
+                diceRemaining = 1
+            else
+                keptDice = [keptDice(1), keptDice(2), keptDice(3), roll(2), 0]
+                lookingFor = [0, roll(2)]
+                diceRemaining = 1 
+            end
+            rolls = rolls + 1
+            tracker = [0 0 0 0 0 0]
+        else
+            rolls = rolls + 1
+            tracker = [0 0 0 0 0 0]
+        end
+
+
+        elseif diceRemaining < 5
+                roll = randi(6, 1, diceRemaining)
+                if lookingFor(1) == 0 & lookingFor(2) ~= 0
+                    if lookingFor(1) == roll(1) 
+                        keptDice = [keptDice(1), keptDice(2), keptDice(3), keptDice(4), roll(1)]
+                        lookingFor = [0, 0]
+                        diceRemaining = 0
+                        fullHouse = true
+                    end
+                elseif lookingFor(1) ~= 0 & lookingFor(2) == 0
+                    if roll(1) == roll(2) & roll(2) == roll(3) & roll(1) ~= lookingFor(1)
+                        keptDice = [keptDice(1), keptDice(2), roll(1), roll(2), roll(3)]
+                        lookingFor = [0, 0]
+                        diceRemaining = 0
+                        fullHouse = true
+                    elseif (roll(1) == roll(2) | roll(1) == roll(3) | roll(2) == roll(3)) & (roll(1) ~= lookingFor(1) | roll(2) ~= lookingFor(1) | roll(3) ~= lookingFor(1))
+                        if roll(1) == roll(2)
+                            keptDice = [keptDice(1), keptDice(2), roll(1), roll(2), 0]
+                            lookingFor = [keptDice(1), roll(1)]
+                            diceRemaining = 1
+                        elseif roll(2) == roll(3)
+                            keptDice = [keptDice(1), keptDice(2), roll(2), roll(3), 0]
+                            lookingFor = [keptDice(1), roll(2)]
+                            diceRemaining = 1
+                        elseif roll(3) == roll(1)
+                            keptDice = [keptDice(1), keptDice(2), roll(1), roll(3), 0]
+                            lookingFor = [keptDice(1), roll(1)]
+                            diceRemaining = 1
+                        end
+                    else
+                        for i = 1:3
+                            if roll(i) == lookingFor(1) & threeKind == 0
+                                keptDice = [keptDice(1), keptDice(2), roll(i), 0, 0]
+                                threeKind = roll(i)
+                                if i == 1
+                                    keptDice = [keptDice(1), keptDice(2), keptDice(3), roll(2), 0]
+                                    lookingFor = [0, roll(2)]
+                                    if roll(2) == roll(3) & roll(i) ~= roll(3)
+                                        keptDice = [keptDice(1), keptDice(2), keptDice(3), roll(2), roll(3)]
+                                        lookingFor = [0, 0]
+                                        diceRemaining = 0
+                                        fullHouse = true                        
+                                    end
+                                elseif i == 2
+                                    keptDice = [keptDice(1), keptDice(2), keptDice(3), roll(1), 0]
+                                    lookingFor = [0, roll(1)]
+                                    if roll(1) == roll(3) & roll(i) ~= roll(3)
+                                        keptDice = [keptDice(1), keptDice(2), keptDice(3), roll(1), roll(3)]
+                                        lookingFor = [0, 0]
+                                        diceRemaining = 0
+                                        fullHouse = true 
+                                    end
+                                elseif i == 3
+                                    keptDice = [keptDice(1), keptDice(2), keptDice(3), roll(1), 0]
+                                    lookingFor = [0, roll(1)]
+                                    if roll(1) == roll(2) & roll(i) ~= roll(2)
+                                        keptDice = [keptDice(1), keptDice(2), keptDice(3), roll(1), roll(2)]
+                                        lookingFor = [0, 0]
+                                        diceRemaining = 0
+                                        fullHouse = true                         
+                                    end
+                                end
+                            end
+                        end
+                    end
+
+                elseif lookingFor(1) ~= 0 & lookingFor(2) ~= 0 
+                    if lookingFor(1) == roll(1)
+                        keptDice = [keptDice(1), keptDice(2), keptDice(3), keptDice(4), roll(1)]
+                        lookingFor = [0, 0]
+                        diceRemaining = 0
+                        fullHouse = true            
+                    elseif lookingFor(2) == roll(1)
+                        keptDice = [keptDice(1), keptDice(2), keptDice(3), keptDice(4), roll(1)]
+                        lookingFor = [0, 0]
+                        diceRemaining = 0
+                        fullHouse = true               
+                    end
+                end
+            rolls = rolls + 1
+        end 
+    end
+    if fullHouse == true
+        points = points + 25
+        pointsSquared = pointsSquared + (25*25)
+        roundsWon = roundsWon + 1
+    end 
+    keptDice = [0 0 0 0 0]; %variable to store dice kept between roles
+    tracker = [0 0 0 0 0 0];
+    fullHouse = false;
+    diceRemaining = 5; %begin with five dice in hand
+    lookingFor = [0, 0];
+    threeKind = 0;
+    rolls = 0
+end
+
+average = points / rounds
+averagePointsSquared = pointsSquared / rounds
+variance = averagePointsSquared - (average*average)
+standardDev = sqrt(variance)
+
+x = standardDev*randn(10000,1)+average;
+[N,X] = hist(x,100);
+hfig = figure;
+bar(X,N)
+hold off;
+title('Histogram for a Full House');
+ylabel('Reoccurrences');
+xlabel('Points Expected');
+
