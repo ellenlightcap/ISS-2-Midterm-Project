@@ -1,0 +1,120 @@
+pointsExpected = 0;
+pointsExpectedSquared = 0;
+averagePoints = 0;
+averagePointsSquared = 0;
+totalPointsExpected = 0;
+totalPointsSquared = 0;
+variance=0;
+standardDev=0;
+numberCount = 0;
+rounds = 0;
+rollNumber = 0;
+roll = [numberWanted];
+numRounds = 0;
+result = 0;
+n=[1,2,3,4];
+n2=[2,3,4,5];
+n3=[3,4,5,6];
+k=0;
+k2=0;
+k3=0;
+x=0;
+
+while rounds < 10000
+    pointsExpected = 0;
+    % Roll 1 
+    for i = 1:5
+        roll(i)=randi(6,1,1);              
+    end
+    fprintf("Roll 1: ");
+    disp(roll);
+    
+    % Check to see if there is small straight in rolled numbers
+    k=sum(ismember(n,roll));
+    k2=sum(ismember(n2,roll));
+    k3=sum(ismember(n3,roll));
+    
+    % Roll 2 
+    if k==4 || k2==4 || k3==4
+        numberCount = numberCount + 1;
+        pointsExpected = pointsExpected +30;
+        fprintf("Small Straight ");
+        disp(numberCount);
+    else
+        for i= 1:5
+            roll(i)=randi(6,1,1);
+        end 
+        fprintf("Not a small straight ");
+        fprintf("\n Roll 2: ");
+        disp(roll);
+        k=sum(ismember(n,roll));
+        k2=sum(ismember(n2,roll));
+        k3=sum(ismember(n3,roll));
+        if k==4 || k2==4 || k3==4
+            numberCount = numberCount + 1;
+            pointsExpected = pointsExpected +30;
+            fprintf("Small Straight ");
+            disp(numberCount);  
+        else 
+            % Roll 3 
+            for i= 1:5
+            roll(i)=randi(6,1,1);
+            end 
+            fprintf("Not a small straight ");
+            %Check to see if there is small straight in rolled numbers
+            fprintf("\n Roll 3: ");
+            disp(roll);
+            %Check to see if there is small straight in rolled numbers
+            k=sum(ismember(n,roll));
+            k2=sum(ismember(n2,roll));
+            k3=sum(ismember(n3,roll));
+            if k==4 || k2==4 || k3==4
+                numberCount = numberCount + 1;
+                pointsExpected = pointsExpected +30;
+                fprintf("Small Straight ");
+                disp(numberCount);            
+            else
+                fprintf("Not a small straight ");
+            end 
+        end         
+   
+    end
+    
+    pointsExpectedSquared = pointsExpected*pointsExpected;
+    totalPointsExpected = totalPointsExpected + pointsExpected; 
+    totalPointsSquared = pointsExpectedSquared + totalPointsSquared; 
+    
+    rounds = rounds+1;
+
+end
+
+fprintf("Total Points Expected: ");
+disp(totalPointsExpected);
+
+averagePoints = totalPointsExpected / rounds; 
+
+averagePointsSquared =  totalPointsSquared / rounds; 
+
+variance = averagePointsSquared - (averagePoints * averagePoints);
+fprintf("Variance ");
+disp(variance);
+
+fprintf("Average Points: ");
+disp(averagePoints);
+
+standardDev = sqrt(variance);
+fprintf("Standard Deviation ");
+disp(standardDev);
+
+x=standardDev*randn(10000,1)+averagePoints;
+[N,X]=hist(x,100);
+hfig=figure;
+bar(X,N)
+hold on;
+title('Histogram for a Small Straight')
+xlabel('Points Expected')
+ylabel('Re-Occurances')
+
+
+
+
