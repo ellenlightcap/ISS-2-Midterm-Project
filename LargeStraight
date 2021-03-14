@@ -1,0 +1,119 @@
+pointsExpected = 0;
+pointsExpectedSquared = 0;
+averagePoints = 0;
+averagePointsSquared = 0;
+totalPointsExpected = 0;
+totalPointsSquared = 0;
+variance=0;
+standardDev=0;
+numberCount = 0;
+rounds = 0;
+rollNumber = 0;
+roll = [numberWanted];
+numRounds = 0;
+result = 0;
+n=[1,2,3,4,5];
+n2=[2,3,4,5,6];
+k=0;
+k2=0;
+x=0;
+
+while rounds < 10000
+    pointsExpected = 0;
+    % Roll 1 
+    for i = 1:5
+        roll(i)=randi(6,1,1);              
+    end
+    fprintf("Roll 1: ");
+    disp(roll);
+    
+    % Check to see if there is small straight in rolled numbers
+    k=sum(ismember(n,roll));
+    k2=sum(ismember(n2,roll));
+    
+    % Roll 2 
+    if k==5 || k2==5 
+        numberCount = numberCount + 1;
+        pointsExpected = pointsExpected +40;
+        fprintf("Large Straight ");
+        disp(numberCount);
+    else
+        for i= 1:5
+            roll(i)=randi(6,1,1);
+        end 
+        fprintf("Not a Large straight ");
+        fprintf("\n Roll 2: ");
+        disp(roll);
+        
+        k=sum(ismember(n,roll));
+        k2=sum(ismember(n2,roll));
+        
+        if k==5 || k2==5 
+            numberCount = numberCount + 1;
+            pointsExpected = pointsExpected +40;
+            fprintf("Large Straight ");
+            disp(numberCount);  
+        else 
+            % Roll 3 
+            for i= 1:5
+            roll(i)=randi(6,1,1);
+            end 
+            fprintf("Not a Large straight ");
+            %Check to see if there is small straight in rolled numbers
+            fprintf("\n Roll 3: ");
+            disp(roll);
+            
+            %Check to see if there is small straight in rolled numbers
+            k=sum(ismember(n,roll));
+            k2=sum(ismember(n2,roll));
+            
+            if k==5 || k2==5 
+                numberCount = numberCount + 1;
+                pointsExpected = pointsExpected +40;
+                fprintf("Large Straight ");
+                disp(numberCount);            
+            else
+                fprintf("Not a Large straight ");
+            end 
+        end         
+   
+    end
+    
+    pointsExpectedSquared = pointsExpected*pointsExpected;
+    totalPointsExpected = totalPointsExpected + pointsExpected; 
+    totalPointsSquared = pointsExpectedSquared + totalPointsSquared; 
+    
+    rounds = rounds+1;
+
+end
+
+fprintf("Total Points Expected: ");
+disp(totalPointsExpected);
+
+averagePoints = totalPointsExpected / rounds; 
+
+averagePointsSquared =  totalPointsSquared / rounds; 
+
+variance = averagePointsSquared - (averagePoints * averagePoints);
+fprintf("Variance ");
+disp(variance);
+
+fprintf("Average Points: ");
+disp(averagePoints);
+
+standardDev = sqrt(variance);
+fprintf("Standard Deviation ");
+disp(standardDev);
+
+x=standardDev*randn(10000,1)+averagePoints;
+[N,X]=hist(x,100);
+hfig=figure;
+bar(X,N)
+hold on;
+title('Histogram for a Large Straight')
+xlabel('Points Expected')
+ylabel('Re-Occurances')
+
+
+
+
