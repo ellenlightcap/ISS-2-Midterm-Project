@@ -1,0 +1,125 @@
+%given you roll two 1s on the first roll:
+%find how many ones you should expect to have after the second roll and the
+%third roll
+
+%if you start with one of a specific number how many points should you
+%expect to recieve after two more rolls
+
+%find theh odds of starting off with the number of times the target number
+%appears on the first roll
+
+numberRounds = 2;
+pointsExpected = 0;
+numberCount = 0;
+numberWanted = 1;
+scoreMultiplier = 6;
+rounds = 0;
+rollNumber = 0;
+totalPointsExpected = 0;
+averagePoints = 0;
+roll = [numberWanted, numberWanted, numberWanted, numberWanted, numberWanted];
+pointsExpectedSquared = 0;
+totalPointsSquared = 0;
+variance = 0;
+standardDeviation = 0;
+totalPointsExpectedSquared = 0;
+
+while rounds < 10000
+    %fprintf("Rolling the die...");
+    for i = 3:5
+        roll(i) = randi([2,6],1,1);
+    end
+    %disp(roll);
+    
+    %roll 2!!
+    for i = 1:5
+        if roll(i) ~= numberWanted
+            roll(i) = randi(6);
+        end
+    end
+    %fprintf("Roll 2: ");
+    %disp(roll);
+    
+    
+    %roll 3!!
+    for i = 1:5
+        if roll(i) ~= numberWanted
+            roll(i) = randi(6);
+        end
+    end
+    %fprintf("Roll 3: ");
+    %disp(roll)
+    for i = 1:5
+        if roll(i) == numberWanted
+            numberCount = numberCount + 1;
+        end
+    end
+    %disp(numberCount);
+    pointsExpected = numberCount * scoreMultiplier;
+    fprintf("Points expected this round: ");
+    disp(pointsExpected);
+    pointsExpectedSquared = pointsExpected * pointsExpected;
+    %fprintf("points expected squared this round: ");
+    %disp(pointsExpectedSquared);
+    
+    
+    totalPointsExpectedSquared = totalPointsExpectedSquared + pointsExpectedSquared;
+    
+    
+    %X^2
+    
+    
+    
+    totalPointsExpected = totalPointsExpected + pointsExpected;
+    %totalPointsExpectedSquared
+    %numbers = find(roll == 1);
+    %disp(numbers)
+    numberCount = 0;
+    rounds = rounds + 1;
+end
+
+
+%the print starement below adds up all of the individual scores for each
+%round squared (1^2 + 3^2 + 4^2)
+
+%X^2
+%fprintf("Total Points expected squared for all rounds: ");
+%disp(totalPointsExpectedSquared);
+
+%(X)^2
+fprintf("Total points expected for all rounds: ");
+disp(totalPointsExpected);
+averagePoints = totalPointsExpected / rounds;
+fprintf("Average points per round: ");
+disp(averagePoints);
+
+%maybe change this not sure if it works
+averagePointsSquared = totalPointsExpectedSquared / rounds;
+%fprintf("Average points squared: ");
+%disp(averagePointsSquared);
+
+%variance 
+variance = averagePointsSquared - (averagePoints * averagePoints);
+fprintf("Variance: ");
+disp(variance);
+
+fprintf("Average points: ");
+disp(averagePoints);
+
+fprintf("Standard Deviation: ");
+standardDeviation = sqrt(variance);
+disp(standardDeviation);
+
+y = standardDeviation * randn(1000, 1) + averagePoints;
+
+[N,Y] = hist(y, 100);
+hfig = figure;
+bar(Y, N);
+title('Histogram for collecting sixes given you roll 2 sixes on the first roll');
+ylabel('Reoccurances');
+xlabel('Points Expected');
+
+
+%%the odds of the bonus will be calculated based on the numbers found for
+%%each of the 1-6 rounds
+
